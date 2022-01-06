@@ -3,6 +3,7 @@ import React, {useRef} from 'react';
 import {Canvas, useThree, extend, ReactThreeFiber, useFrame} from "@react-three/fiber";
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import {Vector3} from "three";
+import {Stars, Stats} from "@react-three/drei";
 extend({OrbitControls});
 
 declare global {
@@ -23,8 +24,9 @@ function App() {
           <Spheres/>
           <directionalLight position={[-10, 10, -5]} intensity={1}/>
           <ambientLight intensity={0.3}/>
-          <axesHelper args={[30]}/>
           <CameraControls/>
+          <Stats/>
+          <Stars/>
       </Canvas>
   )
 }
