@@ -1,7 +1,8 @@
 import './App.css';
-import React from 'react';
-import {Canvas, useThree, extend, ReactThreeFiber} from "@react-three/fiber";
+import React, {useRef} from 'react';
+import {Canvas, useThree, extend, ReactThreeFiber, useFrame} from "@react-three/fiber";
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import {Vector3} from "three";
 extend({OrbitControls});
 
 declare global {
@@ -38,10 +39,36 @@ function CameraControls(){
     )
 }
 
-function Sphere(){
+function Sphere() {
+    // Calculate random velocity, size and position for the sphere
+    let xVelocity = getRandomFloatBetween(0.01, 0.05);
+    let yVelocity = getRandomFloatBetween(0.01, 0.05);
+    let zVelocity = getRandomFloatBetween(0.01, 0.05);
+    const size = getRandomFloatBetween(0.05, 0.5);
+    const spherePosition = new Vector3(getRandomFloatBetween(-5+(size*2), 5-(size*2)), getRandomFloatBetween(-5+(size/2), 5-(size/2)), getRandomFloatBetween(-5+(size/2), 5-(size/2)));
+
+
+    const ref = useRef<THREE.Mesh>(null!);
+    useFrame(() => {
+        // reverse the spheres velocity if outside of bounds to create bounce effect
+        if(ref.current.position.x > 5-(size*2) || ref.current.position.x < -5+(size*2)){
+            xVelocity = -xVelocity;
+        }
+        if(ref.current.position.y > 5-(size*2) || ref.current.position.y < -5+(size*2)){
+            yVelocity = -yVelocity;
+        }
+        if(ref.current.position.z > 5-(size*2) || ref.current.position.z < -5+(size*2)){
+            zVelocity = -zVelocity;
+        }
+
+        // update spheres position
+        ref.current.position.x += xVelocity;
+        ref.current.position.y += yVelocity;
+        ref.current.position.z += zVelocity;
+    })
     return (
-        <mesh position={[0, 0, 0]}>
-            <sphereBufferGeometry args={[0.5]}/>
+        <mesh ref={ref} position={spherePosition}>
+            <sphereBufferGeometry args={[size]}/>
             <meshPhysicalMaterial
                 color="red"
                 roughness={1}
@@ -49,6 +76,10 @@ function Sphere(){
             />
         </mesh>
     )
+}
+
+function getRandomFloatBetween(min: number, max: number){
+    return (Math.random() * (max - min) + min)
 }
 
 
