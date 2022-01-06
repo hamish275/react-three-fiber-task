@@ -57,20 +57,20 @@ function Sphere() {
     let xVelocity = getRandomFloatBetween(0.01, 0.05);
     let yVelocity = getRandomFloatBetween(0.01, 0.05);
     let zVelocity = getRandomFloatBetween(0.01, 0.05);
-    const size = getRandomFloatBetween(0.05, 0.5);
-    const spherePosition = new Vector3(getRandomFloatBetween(-5+(size*2), 5-(size*2)), getRandomFloatBetween(-5+(size/2), 5-(size/2)), getRandomFloatBetween(-5+(size/2), 5-(size/2)));
+    const size = getRandomFloatBetween(0.1, 0.5);
+    const spherePosition = new Vector3(getRandomFloatBetween(-5+(size), 5-(size)), getRandomFloatBetween(-5+(size), 5-(size)), getRandomFloatBetween(-5+(size), 5-(size)));
 
 
     const ref = useRef<THREE.Mesh>(null!);
     useFrame(() => {
         // reverse the spheres velocity if outside of bounds to create bounce effect
-        if(ref.current.position.x > 5-(size*2) || ref.current.position.x < -5+(size*2)){
+        if(ref.current.position.x > 5-(size) || ref.current.position.x < -5+(size)){
             xVelocity = -xVelocity;
         }
-        if(ref.current.position.y > 5-(size*2) || ref.current.position.y < -5+(size*2)){
+        if(ref.current.position.y > 5-(size) || ref.current.position.y < -5+(size)){
             yVelocity = -yVelocity;
         }
-        if(ref.current.position.z > 5-(size*2) || ref.current.position.z < -5+(size*2)){
+        if(ref.current.position.z > 5-(size) || ref.current.position.z < -5+(size)){
             zVelocity = -zVelocity;
         }
 
