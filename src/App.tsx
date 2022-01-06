@@ -4,8 +4,12 @@ import { Canvas } from "@react-three/fiber";
 
 function App() {
   return (
-      <Canvas>
-
+      <Canvas camera={{position: [10, 10, 10]}}>
+          <mesh>
+              <boxBufferGeometry args={[10, 10, 10]}/>
+              <meshPhysicalMaterial wireframe={true}/>
+          </mesh>
+          <axesHelper args={[30, 30]}/>
       </Canvas>
   )
 }
