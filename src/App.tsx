@@ -20,7 +20,7 @@ function App() {
               <boxBufferGeometry args={[10, 10, 10]}/>
               <meshPhysicalMaterial wireframe={true}/>
           </mesh>
-          <Sphere/>
+          <Spheres/>
           <directionalLight position={[-10, 10, -5]} intensity={1}/>
           <ambientLight intensity={0.3}/>
           <axesHelper args={[30]}/>
@@ -37,6 +37,17 @@ function CameraControls(){
     return (
         <orbitControls args={[camera, domElement]}/>
     )
+}
+
+function Spheres(){
+    // create 200 spheres
+    return (
+        <mesh>
+            {[...Array(200)].map((value, index) => {
+                return <Sphere key={index} />;
+            })}
+        </mesh>
+    );
 }
 
 function Sphere() {
