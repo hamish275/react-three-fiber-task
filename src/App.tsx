@@ -20,6 +20,8 @@ function App() {
               <meshPhysicalMaterial wireframe={true}/>
           </mesh>
           <Sphere/>
+          <directionalLight position={[-10, 10, -5]} intensity={1}/>
+          <ambientLight intensity={0.3}/>
           <axesHelper args={[30]}/>
           <CameraControls/>
       </Canvas>
