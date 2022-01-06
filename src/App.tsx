@@ -19,6 +19,7 @@ function App() {
               <boxBufferGeometry args={[10, 10, 10]}/>
               <meshPhysicalMaterial wireframe={true}/>
           </mesh>
+          <Sphere/>
           <axesHelper args={[30]}/>
           <CameraControls/>
       </Canvas>
@@ -34,5 +35,20 @@ function CameraControls(){
         <orbitControls args={[camera, domElement]}/>
     )
 }
+
+function Sphere(){
+    return (
+        <mesh position={[0, 0, 0]}>
+            <sphereBufferGeometry args={[0.5]}/>
+            <meshPhysicalMaterial
+                color="red"
+                roughness={1}
+                clearcoat={0.5}
+            />
+        </mesh>
+    )
+}
+
+
 
 export default App;
