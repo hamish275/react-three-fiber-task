@@ -10,23 +10,16 @@ const spheres = [...Array(200)].map(() => ({
         velocity: [getRandomFloatBetween(-2, 2), getRandomFloatBetween(-2, 2), getRandomFloatBetween(-2, 2)],
         position: [getRandomFloatBetween(-4.5, 4.5), getRandomFloatBetween(-4.5, 4.5), getRandomFloatBetween(-4.5, 4.5)]
     }));
-const cubes = [...Array(20)].map(() => ({
-    size: getRandomFloatBetween(0.5, 1),
-    velocity: [getRandomFloatBetween(-1, 1), getRandomFloatBetween(-1, 1), getRandomFloatBetween(-2, 2)],
-    position: [getRandomFloatBetween(-4.5, 4.5), getRandomFloatBetween(-4.5, 4.5), getRandomFloatBetween(-4.5, 4.5)]
-}));
 
 function App() {
   return (
       <Canvas camera={{position: [10, 10, 10]}}>
           <Physics
               gravity={[0, 0, 0]}
-              broadphase="SAP"
               defaultContactMaterial={{
                   restitution: 1
               }}>
               {spheres.map((props, i) => <Sphere key={i} {...props} />)}
-              {cubes.map((props, i) => <Cube key={i} {...props} />)}
               <Box/>
           </Physics>
           <directionalLight position={[-10, 10, -5]} intensity={1}/>
@@ -48,25 +41,6 @@ function Sphere(props: any) {
     return (
         <mesh ref={ref}>
             <sphereBufferGeometry args={[props.size]} />
-            <meshPhysicalMaterial
-                color={colors[Math.floor(Math.random()*colors.length)]}
-                roughness={1}
-                clearcoat={0.5}
-            />
-        </mesh>
-    )
-}
-
-function Cube(props: any) {
-    // apply cannon physics to cube
-    const [ref] = useBox(() => ({
-        args: [props.size, props.size, props.size],
-        mass: props.size*5,
-        ...props,
-    }));
-    return (
-        <mesh ref={ref}>
-            <boxBufferGeometry args={[props.size, props.size, props.size]} />
             <meshPhysicalMaterial
                 color={colors[Math.floor(Math.random()*colors.length)]}
                 roughness={1}
