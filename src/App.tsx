@@ -1,12 +1,9 @@
 import './App.css';
 import React, {useEffect, useRef} from 'react';
 import {Canvas, useThree, extend, ReactThreeFiber, useFrame} from "@react-three/fiber";
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import * as THREE from 'three';
-import {Stars, Stats} from "@react-three/drei";
+import {Stars, Stats, OrbitControls} from "@react-three/drei";
 import {Physics, useBox, usePlane, useSphere } from '@react-three/cannon';
-import { Vector3 } from 'three';
-extend({OrbitControls});
 
 const colors = ["#cdb4db", "#ffc8dd", "#ffafcc", "#bde0fe", "#a2d2ff"]
 const spheres = [...Array(200)].map(() => ({
@@ -19,14 +16,6 @@ const cubes = [...Array(20)].map(() => ({
     velocity: [getRandomFloatBetween(-1, 1), getRandomFloatBetween(-1, 1), getRandomFloatBetween(-2, 2)],
     position: [getRandomFloatBetween(-4.5, 4.5), getRandomFloatBetween(-4.5, 4.5), getRandomFloatBetween(-4.5, 4.5)]
 }));
-
-declare global {
-    namespace JSX {
-        interface IntrinsicElements {
-            'orbitControls': ReactThreeFiber.Object3DNode<OrbitControls, typeof OrbitControls>;
-        }
-    }
-}
 
 function App() {
   return (
@@ -43,21 +32,11 @@ function App() {
           </Physics>
           <directionalLight position={[-10, 10, -5]} intensity={1}/>
           <ambientLight intensity={0.3}/>
-          <CameraControls/>
+          <OrbitControls/>
           <Stats/>
           <Stars/>
       </Canvas>
   )
-}
-
-function CameraControls(){
-    const {
-        camera,
-        gl: { domElement },
-    } = useThree();
-    return (
-        <orbitControls args={[camera, domElement]}/>
-    )
 }
 
 function Sphere(props: any) {
