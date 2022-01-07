@@ -61,14 +61,15 @@ function CameraControls(){
 }
 
 function Sphere(props: any) {
-    const [ref, api] = useSphere(() => ({
+    // apply cannon pyhsics to sphere
+    const [ref] = useSphere(() => ({
         args: [props.size],
         mass: props.size,
         ...props,
     }));
     return (
         <mesh ref={ref}>
-            <sphereBufferGeometry attach="geometry" args={[props.size]} />
+            <sphereBufferGeometry args={[props.size]} />
             <meshPhysicalMaterial
                 color={colors[Math.floor(Math.random()*colors.length)]}
                 roughness={1}
@@ -79,14 +80,15 @@ function Sphere(props: any) {
 }
 
 function Cube(props: any) {
-    const [ref, api] = useBox(() => ({
+    // apply cannon physics to cube
+    const [ref] = useBox(() => ({
         args: [props.size, props.size, props.size],
-        mass: 10,
+        mass: props.size*5,
         ...props,
     }));
     return (
         <mesh ref={ref}>
-            <boxBufferGeometry attach="geometry" args={[props.size, props.size, props.size]} />
+            <boxBufferGeometry args={[props.size, props.size, props.size]} />
             <meshPhysicalMaterial
                 color={colors[Math.floor(Math.random()*colors.length)]}
                 roughness={1}
@@ -97,8 +99,9 @@ function Cube(props: any) {
 }
 
 function Plane(props: any) {
+    // apply cannon physics to plane
     const [ref] = usePlane(() => ({
-        type: "Static",
+        type: "Static", // static body has infinite mass and does not move
         ...props
     }))
     return (
@@ -110,6 +113,7 @@ function Plane(props: any) {
 }
 
 function Box(){
+    // 6 planes rotated and translated to form a box
     return (
         <>
             <Plane position={[0, -5, 0]} rotation={[-Math.PI/2, 0, 0]}/>
