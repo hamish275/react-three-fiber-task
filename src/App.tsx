@@ -1,10 +1,24 @@
 import './App.css';
-import React, {useRef} from 'react';
+import React, {useEffect, useRef} from 'react';
 import {Canvas, useThree, extend, ReactThreeFiber, useFrame} from "@react-three/fiber";
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
-import {Vector3} from "three";
+import * as THREE from 'three';
 import {Stars, Stats} from "@react-three/drei";
+import {Physics, useBox, usePlane, useSphere } from '@react-three/cannon';
+import { Vector3 } from 'three';
 extend({OrbitControls});
+
+const colors = ["#cdb4db", "#ffc8dd", "#ffafcc", "#bde0fe", "#a2d2ff"]
+const spheres = [...Array(200)].map(() => ({
+        size: getRandomFloatBetween(0.1, 0.5),
+        velocity: [getRandomFloatBetween(-2, 2), getRandomFloatBetween(-2, 2), getRandomFloatBetween(-2, 2)],
+        position: [getRandomFloatBetween(-4.5, 4.5), getRandomFloatBetween(-4.5, 4.5), getRandomFloatBetween(-4.5, 4.5)]
+    }));
+const cubes = [...Array(20)].map(() => ({
+    size: getRandomFloatBetween(0.5, 1),
+    velocity: [getRandomFloatBetween(-1, 1), getRandomFloatBetween(-1, 1), getRandomFloatBetween(-2, 2)],
+    position: [getRandomFloatBetween(-4.5, 4.5), getRandomFloatBetween(-4.5, 4.5), getRandomFloatBetween(-4.5, 4.5)]
+}));
 
 declare global {
     namespace JSX {
@@ -17,11 +31,16 @@ declare global {
 function App() {
   return (
       <Canvas camera={{position: [10, 10, 10]}}>
-          <mesh>
-              <boxBufferGeometry args={[10, 10, 10]}/>
-              <meshPhysicalMaterial wireframe={true}/>
-          </mesh>
-          <Spheres/>
+          <Physics
+              gravity={[0, 0, 0]}
+              broadphase="SAP"
+              defaultContactMaterial={{
+                  restitution: 1
+              }}>
+              {spheres.map((props, i) => <Sphere key={i} {...props} />)}
+              {cubes.map((props, i) => <Cube key={i} {...props} />)}
+              <Box/>
+          </Physics>
           <directionalLight position={[-10, 10, -5]} intensity={1}/>
           <ambientLight intensity={0.3}/>
           <CameraControls/>
@@ -41,49 +60,17 @@ function CameraControls(){
     )
 }
 
-function Spheres(){
-    // create 200 spheres
+function Sphere(props: any) {
+    const [ref, api] = useSphere(() => ({
+        args: [props.size],
+        mass: props.size,
+        ...props,
+    }));
     return (
-        <mesh>
-            {[...Array(200)].map((value, index) => {
-                return <Sphere key={index} />;
-            })}
-        </mesh>
-    );
-}
-
-function Sphere() {
-    // Calculate random velocity, size and position for the sphere
-    let xVelocity = getRandomFloatBetween(0.01, 0.05);
-    let yVelocity = getRandomFloatBetween(0.01, 0.05);
-    let zVelocity = getRandomFloatBetween(0.01, 0.05);
-    const size = getRandomFloatBetween(0.1, 0.5);
-    const spherePosition = new Vector3(getRandomFloatBetween(-5+(size), 5-(size)), getRandomFloatBetween(-5+(size), 5-(size)), getRandomFloatBetween(-5+(size), 5-(size)));
-
-
-    const ref = useRef<THREE.Mesh>(null!);
-    useFrame(() => {
-        // reverse the spheres velocity if outside of bounds to create bounce effect
-        if(ref.current.position.x > 5-(size) || ref.current.position.x < -5+(size)){
-            xVelocity = -xVelocity;
-        }
-        if(ref.current.position.y > 5-(size) || ref.current.position.y < -5+(size)){
-            yVelocity = -yVelocity;
-        }
-        if(ref.current.position.z > 5-(size) || ref.current.position.z < -5+(size)){
-            zVelocity = -zVelocity;
-        }
-
-        // update spheres position
-        ref.current.position.x += xVelocity;
-        ref.current.position.y += yVelocity;
-        ref.current.position.z += zVelocity;
-    })
-    return (
-        <mesh ref={ref} position={spherePosition}>
-            <sphereBufferGeometry args={[size]}/>
+        <mesh ref={ref}>
+            <sphereBufferGeometry attach="geometry" args={[props.size]} />
             <meshPhysicalMaterial
-                color="red"
+                color={colors[Math.floor(Math.random()*colors.length)]}
                 roughness={1}
                 clearcoat={0.5}
             />
@@ -91,10 +78,53 @@ function Sphere() {
     )
 }
 
+function Cube(props: any) {
+    const [ref, api] = useBox(() => ({
+        args: [props.size, props.size, props.size],
+        mass: 10,
+        ...props,
+    }));
+    return (
+        <mesh ref={ref}>
+            <boxBufferGeometry attach="geometry" args={[props.size, props.size, props.size]} />
+            <meshPhysicalMaterial
+                color={colors[Math.floor(Math.random()*colors.length)]}
+                roughness={1}
+                clearcoat={0.5}
+            />
+        </mesh>
+    )
+}
+
+function Plane(props: any) {
+    const [ref] = usePlane(() => ({
+        type: "Static",
+        ...props
+    }))
+    return (
+        <mesh ref={ref}>
+            <planeGeometry args={[10, 10]} />
+            <meshBasicMaterial side={THREE.DoubleSide} wireframe={true}/>
+        </mesh>
+    )
+}
+
+function Box(){
+    return (
+        <>
+            <Plane position={[0, -5, 0]} rotation={[-Math.PI/2, 0, 0]}/>
+            <Plane position={[0, 5, 0]} rotation={[Math.PI/2, 0, 0]}/>
+            <Plane position={[-5, 0, 0]} rotation={[0, Math.PI/2, 0]}/>
+            <Plane position={[5, 0, 0]} rotation={[0, -Math.PI/2, 0]}/>
+            <Plane position={[0, 0, -5]} rotation={[0, 0, 0]}/>
+            <Plane position={[0, 0, 5]} rotation={[Math.PI, 0, 0]}/>
+        </>
+    )
+}
+
 function getRandomFloatBetween(min: number, max: number){
     return (Math.random() * (max - min) + min)
 }
 
-
-
 export default App;
+
