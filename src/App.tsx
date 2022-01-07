@@ -1,8 +1,7 @@
 import './App.css';
 import {Canvas} from "@react-three/fiber";
-import * as THREE from 'three';
-import {Stars, Stats, OrbitControls} from "@react-three/drei";
-import {Physics, useBox, usePlane, useSphere } from '@react-three/cannon';
+import {Sky, Stats, OrbitControls} from "@react-three/drei";
+import {Physics, usePlane, useSphere } from '@react-three/cannon';
 
 const colors = ["#cdb4db", "#ffc8dd", "#ffafcc", "#bde0fe", "#a2d2ff"]
 const spheres = [...Array(200)].map(() => ({
@@ -13,7 +12,7 @@ const spheres = [...Array(200)].map(() => ({
 
 function App() {
   return (
-      <Canvas camera={{position: [10, 10, 10]}}>
+      <Canvas camera={{position: [10, 5, 15]}} shadows >
           <Physics
               gravity={[0, 0, 0]}
               defaultContactMaterial={{
@@ -22,11 +21,23 @@ function App() {
               {spheres.map((props, i) => <Sphere key={i} {...props} />)}
               <Box/>
           </Physics>
-          <directionalLight position={[-10, 10, -5]} intensity={1}/>
-          <ambientLight intensity={0.3}/>
+          <mesh position={[0, -6, 0]} receiveShadow={true}>
+              <boxBufferGeometry args={[15, 2, 15]}/>
+              <meshLambertMaterial/>
+          </mesh>
+          <directionalLight
+              position={[-20, 20, -20]}
+              intensity={0.5}
+              castShadow={true}
+              shadow-camera-left={-10}
+              shadow-camera-right={10}
+              shadow-camera-top={10}
+              shadow-camera-bottom={-10}
+          />
+          <ambientLight intensity={0.2}/>
           <OrbitControls/>
           <Stats/>
-          <Stars/>
+          <Sky/>
       </Canvas>
   )
 }
@@ -39,12 +50,11 @@ function Sphere(props: any) {
         ...props,
     }));
     return (
-        <mesh ref={ref}>
+        <mesh ref={ref} castShadow={true} receiveShadow={true}>
             <sphereBufferGeometry args={[props.size]} />
             <meshPhysicalMaterial
                 color={colors[Math.floor(Math.random()*colors.length)]}
-                roughness={1}
-                clearcoat={0.5}
+                clearcoat={0.3}
             />
         </mesh>
     )
@@ -59,7 +69,7 @@ function Plane(props: any) {
     return (
         <mesh ref={ref}>
             <planeGeometry args={[10, 10]} />
-            <meshBasicMaterial side={THREE.DoubleSide} wireframe={true}/>
+            <meshBasicMaterial wireframe={true}/>
         </mesh>
     )
 }
