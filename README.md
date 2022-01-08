@@ -1,5 +1,7 @@
 # React Three Fiber Task
 
+[Preview](https://react-three-fiber-task-q9qt3.ondigitalocean.app/)
+
 ## Project Description
 
 This React app uses [react-three-fiber](https://github.com/pmndrs/react-three-fiber) to create a WebGL scene that generates 200 spheres enclosed within a wireframe cube. The spheres are created with randomized size, velocity, and color. Physics are simulated in a zero-gravity environment using the [use-cannon](https://github.com/pmndrs/react-three-fiber) library which also handles collision between objects.
