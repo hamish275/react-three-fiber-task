@@ -1,7 +1,7 @@
 import './App.css';
 import {Canvas} from "@react-three/fiber";
 import {Sky, Stats, OrbitControls} from "@react-three/drei";
-import {Physics, usePlane, useSphere } from '@react-three/cannon';
+import {Physics} from '@react-three/cannon';
 import Sphere from './components/Sphere';
 import Box from './components/Box';
 
