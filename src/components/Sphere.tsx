@@ -3,7 +3,7 @@ import { useSphere } from "@react-three/cannon";
 const colors = ["#cdb4db", "#ffc8dd", "#ffafcc", "#bde0fe", "#a2d2ff"]
 
 function Sphere(props: any) {
-    // apply cannon pyhsics to sphere
+    // apply cannon physics to sphere
     const [ref] = useSphere(() => ({
         args: [props.size],
         mass: props.size,
